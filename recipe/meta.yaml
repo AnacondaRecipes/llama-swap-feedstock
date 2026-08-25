@@ -34,9 +34,10 @@ requirements:
     - go-licenses
     # nodejs is only a build-time dep: the Svelte web UI is compiled with Vite
     # in ui/ and embedded into the Go binary via the embed_ui build tag
-    # (see internal/server/embed.go). Hard-pinned since nodejs isn't in the
-    # aggregate CBC.
-    - nodejs 26.6.0
+    # (see internal/server/embed.go). Left unversioned — pkgs/main has 26.6.0
+    # but PBP's pbp_src_multichannel doesn't ship that exact build, and the
+    # Svelte toolchain is stable across recent node majors.
+    - nodejs
     - make  # [not win]
 
 test:
