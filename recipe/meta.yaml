@@ -46,11 +46,11 @@ test:
     # Grepping for the stamped version + commit proves the -X ldflags in
     # build.sh / bld.bat actually landed on main.version / main.commit
     # (a plain `--version` invocation only proves the binary loads).
-    - llama-swap --version | grep "v{{ version }}"                        # [unix]
-    - llama-swap --version | grep "{{ commit }}"                          # [unix]
+    - llama-swap --version | grep v{{ version }}                          # [unix]
+    - llama-swap --version | grep {{ commit }}                            # [unix]
     - if not exist "%PREFIX%\Library\bin\llama-swap.exe" exit 1           # [win]
-    - '"%PREFIX%\Library\bin\llama-swap.exe" --version | findstr "v{{ version }}"'  # [win]
-    - '"%PREFIX%\Library\bin\llama-swap.exe" --version | findstr "{{ commit }}"'    # [win]
+    - "%PREFIX%\\Library\\bin\\llama-swap.exe --version | findstr v{{ version }}"  # [win]
+    - "%PREFIX%\\Library\\bin\\llama-swap.exe --version | findstr {{ commit }}"    # [win]
 
 about:
   home: https://github.com/mostlygeek/llama-swap
