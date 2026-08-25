@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-REM Force pure-Go build (no CGO) — matches upstream release defaults.
+REM Force pure-Go build (no CGO) -- matches upstream release defaults.
 set CGO_ENABLED=0
 REM Reproducible build: don't stamp per-machine VCS info.
 set GOFLAGS=-buildvcs=false
@@ -16,7 +16,7 @@ if errorlevel 1 exit 1
 popd
 
 REM 2. Compile the Go binary; ldflags stamp version + commit surfaced by
-REM    `llama-swap --version`. main.date is intentionally NOT stamped — we
+REM    `llama-swap --version`. main.date is intentionally NOT stamped -- we
 REM    aren't upstream's release build (Stan Seibert review, PKG-17553).
 go build ^
     -tags embed_ui ^
