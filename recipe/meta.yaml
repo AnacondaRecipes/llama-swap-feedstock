@@ -49,8 +49,8 @@ test:
     - llama-swap --version | grep v{{ version }}                          # [unix]
     - llama-swap --version | grep {{ commit }}                            # [unix]
     - if not exist "%PREFIX%\Library\bin\llama-swap.exe" exit 1           # [win]
-    - '"%PREFIX%\\Library\\bin\\llama-swap.exe" --version | findstr v{{ version }}'  # [win]
-    - '"%PREFIX%\\Library\\bin\\llama-swap.exe" --version | findstr {{ commit }}'    # [win]
+    - llama-swap --version | findstr v{{ version }}                       # [win]
+    - llama-swap --version | findstr {{ commit }}                         # [win]
 
 about:
   home: https://github.com/mostlygeek/llama-swap
