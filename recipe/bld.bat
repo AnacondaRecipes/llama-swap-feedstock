@@ -15,11 +15,12 @@ call npm run build
 if errorlevel 1 exit 1
 popd
 
-REM 2. Compile the Go binary; ldflags stamp version/commit/date to match
-REM    upstream release-build metadata surfaced by `llama-swap --version`.
+REM 2. Compile the Go binary; ldflags stamp version + commit surfaced by
+REM    `llama-swap --version`. main.date is intentionally NOT stamped — we
+REM    aren't upstream's release build (Stan Seibert review, PKG-17553).
 go build ^
     -tags embed_ui ^
-    -ldflags "-s -w -X main.version=%LLAMA_SWAP_VERSION% -X main.commit=%LLAMA_SWAP_COMMIT% -X main.date=%LLAMA_SWAP_DATE%" ^
+    -ldflags "-s -w -X main.version=%LLAMA_SWAP_VERSION% -X main.commit=%LLAMA_SWAP_COMMIT%" ^
     -v -o "%PREFIX%\Library\bin\llama-swap.exe" ^
     .
 if errorlevel 1 exit 1

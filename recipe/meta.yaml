@@ -1,9 +1,10 @@
 {% set name = "llama-swap" %}
 {% set version = "251" %}
-# Short commit + release date embedded into the binary's --version output so
-# it matches upstream release-build metadata (see main.commit / main.date).
+# Short commit embedded into `llama-swap --version` output so it matches
+# upstream release-build metadata. We deliberately do NOT stamp main.date —
+# our build isn't upstream's release build, so mirroring their timestamp
+# would be misleading (per Stan Seibert review, PKG-17553).
 {% set commit = "4ec317589" %}
-{% set build_date = "2026-08-23T06:58:47Z" %}
 
 package:
   name: {{ name|lower }}
@@ -22,7 +23,6 @@ build:
   script_env:
     - LLAMA_SWAP_VERSION=v{{ version }}
     - LLAMA_SWAP_COMMIT={{ commit }}
-    - LLAMA_SWAP_DATE={{ build_date }}
 
 requirements:
   build:
