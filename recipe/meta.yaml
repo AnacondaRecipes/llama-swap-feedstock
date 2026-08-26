@@ -1,0 +1,76 @@
+{% set name = "llama-swap" %}
+{% set version = "251" %}
+# Short commit embedded into `llama-swap --version` output so it matches
+# upstream release-build metadata. We deliberately do NOT stamp main.date —
+# our build isn't upstream's release build, so mirroring their timestamp
+# would be misleading (per Stan Seibert review, PKG-17553).
+{% set commit = "4ec317589" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/mostlygeek/llama-swap/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: b793e96d06310636ffcc8d4be77be226517c104157197eb6609ce5e217e6b9ea
+
+build:
+  number: 0
+  # Go binary — no ABI to Python; skip: none needed.
+  # binary_relocation: false — pure Go, no shared-lib prefix-rewriting to do.
+  binary_relocation: false
+  detect_binary_files_with_prefix: false
+  script_env:
+    - LLAMA_SWAP_VERSION=v{{ version }}
+    - LLAMA_SWAP_COMMIT={{ commit }}
+
+requirements:
+  build:
+    # Upstream go.mod declares `go 1.26.1`; aggregate CBC pins the go compiler
+    # at 1.21, so use an explicit go-nocgo lower bound instead of
+    # `{{ compiler('go') }}`. pkgs/main ships go-nocgo >=1.26.4.
+    - go-nocgo >=1.26
+    - {{ stdlib('c') }}
+    - go-licenses
+    # nodejs is only a build-time dep: the Svelte web UI is compiled with Vite
+    # in ui/ and embedded into the Go binary via the embed_ui build tag
+    # (see internal/server/embed.go). Left unversioned — pkgs/main has 26.6.0
+    # but PBP's pbp_src_multichannel doesn't ship that exact build, and the
+    # Svelte toolchain is stable across recent node majors.
+    - nodejs
+    - make  # [not win]
+
+test:
+  commands:
+    # Upstream prints `version: v{{ version }} ({{ commit }}), built at unknown`.
+    # Grepping for the stamped version + commit proves the -X ldflags in
+    # build.sh / bld.bat actually landed on main.version / main.commit
+    # (a plain `--version` invocation only proves the binary loads).
+    - llama-swap --version | grep v{{ version }}                          # [unix]
+    - llama-swap --version | grep {{ commit }}                            # [unix]
+    - if not exist "%PREFIX%\Library\bin\llama-swap.exe" exit 1           # [win]
+    - llama-swap --version | findstr v{{ version }}                       # [win]
+    - llama-swap --version | findstr {{ commit }}                         # [win]
+
+about:
+  home: https://github.com/mostlygeek/llama-swap
+  license: MIT
+  license_family: MIT
+  license_file:
+    - LICENSE.md
+    - library_licenses/
+  summary: Reliable model swapping for any local OpenAI/Anthropic compatible server (llama.cpp, vllm, etc.)
+  description: |
+    llama-swap is a lightweight, transparent proxy server for local LLM
+    inference engines like llama.cpp, vllm, and others. It watches your
+    OpenAI/Anthropic-compatible requests, automatically swaps the underlying
+    model / engine / flags based on the request, and forwards the traffic —
+    letting a single endpoint serve many models with different runtime
+    configurations. Ships with an embedded Svelte web UI for monitoring.
+  doc_url: https://github.com/mostlygeek/llama-swap/tree/main/docs
+  dev_url: https://github.com/mostlygeek/llama-swap
+
+extra:
+  recipe-maintainers:
+    - sseibert
+    - xkong-anaconda
