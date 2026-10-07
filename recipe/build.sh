@@ -4,6 +4,8 @@ set -euxo pipefail
 # Force pure-Go build (no CGO) — matches upstream release-build defaults and
 # avoids a hard dep on the C toolchain at runtime.
 export CGO_ENABLED=0
+# Use the conda toolchain; fail instead of downloading another Go release.
+export GOTOOLCHAIN=local
 # Reproducible build: don't stamp per-machine VCS info into the binary.
 export GOFLAGS="-buildvcs=false"
 

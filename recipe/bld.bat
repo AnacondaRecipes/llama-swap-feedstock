@@ -3,6 +3,8 @@ setlocal EnableDelayedExpansion
 
 REM Force pure-Go build (no CGO) -- matches upstream release defaults.
 set CGO_ENABLED=0
+REM Use the conda toolchain; fail instead of downloading another Go release.
+set GOTOOLCHAIN=local
 REM Reproducible build: don't stamp per-machine VCS info.
 set GOFLAGS=-buildvcs=false
 
