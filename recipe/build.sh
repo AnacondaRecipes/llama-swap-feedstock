@@ -14,7 +14,8 @@ export GOFLAGS="-buildvcs=false"
 #    internal/server/embed.go).
 pushd ui
 npm ci --no-audit --no-fund
-npm run build
+# Include notices for the actual bundled UI modules, including devDependencies.
+node --input-type=module -e "import { build } from 'vite'; await build({build: {emptyOutDir: true, license: {fileName: 'third-party-licenses.json'}}});"
 popd
 
 # 2. Compile the Go binary. -ldflags "-s -w" strips symbols; the -X flags

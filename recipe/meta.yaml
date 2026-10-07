@@ -1,18 +1,23 @@
 {% set name = "llama-swap" %}
-{% set version = "261" %}
+{% set version = "262" %}
 # Short commit embedded into `llama-swap --version` output so it matches
 # upstream release-build metadata. We deliberately do NOT stamp main.date —
 # our build isn't upstream's release build, so mirroring their timestamp
 # would be misleading (per Stan Seibert review, PKG-17553).
-{% set commit = "42d8a5d33" %}
+{% set commit = "079c35ae8" %}
 
 package:
   name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://github.com/mostlygeek/llama-swap/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 5a7ba4fc9873280ec57163873928b0be0e1adeac114d1a5b5306d9eac5422ddb
+  - url: https://github.com/mostlygeek/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: 23d0f6e6aa5e9b3cc9c75e2c3f5b91f3362bd62e63040479a3f3d5db9a8a9f15
+  # remark-math 6.0.0 and rehype-katex 7.0.1 omit this shared MIT text from npm.
+  # Identical at both npm gitHead revisions; use rehype-katex's recorded revision.
+  - url: https://raw.githubusercontent.com/remarkjs/remark-math/88a9497e1ede93b958237c85edbf5651faeca7af/license
+    sha256: cb992262f361a5359e6771c28740d33c7041e15332ae8537fae40538992591a9
+    fn: remark-math-LICENSE
 
 build:
   number: 0
@@ -48,11 +53,13 @@ test:
 
 about:
   home: https://github.com/mostlygeek/llama-swap
-  license: MIT
-  license_family: MIT
+  license: MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ISC
+  license_family: Other
   license_file:
     - LICENSE.md
     - library_licenses/
+    - internal/server/ui_dist/third-party-licenses.json
+    - remark-math-LICENSE
   summary: Reliable model swapping for any local OpenAI/Anthropic compatible server (llama.cpp, vllm, etc.)
   description: |
     llama-swap is a lightweight, transparent proxy server for local LLM
