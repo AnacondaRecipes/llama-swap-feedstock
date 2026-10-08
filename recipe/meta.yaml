@@ -40,6 +40,8 @@ requirements:
     - make  # [not win]
 
 test:
+  requires:
+    - python
   commands:
     # Upstream prints `version: v{{ version }} ({{ commit }}), built at unknown`.
     # Grepping for the stamped version + commit proves the -X ldflags in
