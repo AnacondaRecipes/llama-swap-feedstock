@@ -3,6 +3,8 @@ setlocal EnableDelayedExpansion
 
 REM Force pure-Go build (no CGO) -- matches upstream release defaults.
 set CGO_ENABLED=0
+REM Use the conda toolchain; fail instead of downloading another Go release.
+set GOTOOLCHAIN=local
 REM Reproducible build: don't stamp per-machine VCS info.
 set GOFLAGS=-buildvcs=false
 
@@ -11,7 +13,8 @@ REM    embedded into the Go binary via the embed_ui build tag).
 pushd ui
 call npm ci --no-audit --no-fund
 if errorlevel 1 exit 1
-call npm run build
+REM Include notices for the actual bundled UI modules.
+node --input-type=module -e "import { build } from 'vite'; await build({build: {emptyOutDir: true, license: {fileName: 'third-party-licenses.json'}}});"
 if errorlevel 1 exit 1
 popd
 

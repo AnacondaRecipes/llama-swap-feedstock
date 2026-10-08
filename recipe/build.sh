@@ -4,6 +4,8 @@ set -euxo pipefail
 # Force pure-Go build (no CGO) — matches upstream release-build defaults and
 # avoids a hard dep on the C toolchain at runtime.
 export CGO_ENABLED=0
+# Use the conda toolchain; fail instead of downloading another Go release.
+export GOTOOLCHAIN=local
 # Reproducible build: don't stamp per-machine VCS info into the binary.
 export GOFLAGS="-buildvcs=false"
 
@@ -12,7 +14,8 @@ export GOFLAGS="-buildvcs=false"
 #    internal/server/embed.go).
 pushd ui
 npm ci --no-audit --no-fund
-npm run build
+# Include notices for the actual bundled UI modules, including devDependencies.
+node --input-type=module -e "import { build } from 'vite'; await build({build: {emptyOutDir: true, license: {fileName: 'third-party-licenses.json'}}});"
 popd
 
 # 2. Compile the Go binary. -ldflags "-s -w" strips symbols; the -X flags
