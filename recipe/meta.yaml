@@ -41,7 +41,7 @@ requirements:
 
 test:
   requires:
-    - python
+    - python *  # Test runner only; avoid per-Python builds of the Go binary.
   commands:
     # Upstream prints `version: v{{ version }} ({{ commit }}), built at unknown`.
     # Grepping for the stamped version + commit proves the -X ldflags in
